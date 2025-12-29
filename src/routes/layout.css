@@ -1,0 +1,20 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+*{
+    box-sizing: border-box;
+}
+
+@media print {
+
+      @page {
+    margin: 0;
+  }
+  
+  /* Also ensure the body and main content elements have no margins/padding */
+  body, html {
+    margin: 0;
+    padding: 0;
+  }
+}
