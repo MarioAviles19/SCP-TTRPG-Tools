@@ -2,10 +2,114 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 
+:root {
+  /* Page background (darker) */
+  --color-background: rgb(2, 6, 23);                 /* slate-950 */
+  --color-background-foreground: rgb(226, 232, 240); /* slate-200 */
+
+  /* Cards / panels (lighter) */
+  --color-card: rgb(30, 41, 59);                     /* slate-800 */
+  --color-card-foreground: rgb(241, 245, 249);      /* slate-100 */
+
+  /* Inputs / subtle surfaces */
+  --color-muted: rgb(51, 65, 85);                    /* slate-700 */
+  --color-muted-foreground: rgb(203, 213, 225);     /* slate-300 */
+
+  /* Borders */
+  --color-border: rgb(71, 85, 105);                  /* slate-600 */
+
+  /* Primary actions */
+  --color-primary: rgb(79, 70, 229);                 /* indigo-600 */
+  --color-primary-foreground: white;
+
+  /* Secondary */
+  --color-secondary: rgb(51, 65, 85);                /* slate-700 */
+  --color-secondary-foreground: rgb(226, 232, 240);
+
+  /* Accent */
+  --color-accent: rgb(56, 189, 248);                 /* sky-400 */
+  --color-accent-foreground: rgb(2, 6, 23);
+
+  /* Destructive */
+  --color-destructive: rgb(239, 68, 68);
+  --color-destructive-foreground: white;
+
+  /* Skeleton loaders */
+  --color-skeleton: rgba(148, 163, 184, 0.18);
+
+  --width-clamp-medium: 80rem;
+}
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-foreground: var(--color-primary-foreground);
+
+  --color-accent: var(--color-accent);
+  --color-accent-foreground: var(--color-accent-foreground);
+
+  --color-secondary: var(--color-secondary);
+  --color-secondary-foreground: var(--color-secondary-foreground);
+
+  --color-background: var(--color-background);
+  --color-background-foreground: var(--color-background-foreground);
+
+  --color-card: @apply bg-slate-900 ;
+  --color-card-foreground: @apply text-slate-100;
+
+  --color-border: var(--color-border);
+
+  --color-muted: var(--color-muted);
+  --color-muted-foreground: var(--color-muted-foreground);
+
+  --color-skeleton: var(--color-skeleton);
+
+  --color-destructive: var(--color-destructive);
+  --color-destructive-foreground: var(--color-destructive-foreground);
+}
+
+@layer components{
+  
+  .border-primary{
+    @apply  bg-card text-card-foreground
+  }
+  .btn{
+    @apply py-0.5 px-1 border-primary border-2 rounded cursor-pointer bg-primary-foreground
+  }
+  .btn:hover{
+    @apply bg-primary/5
+  }
+    .input, .textarea {
+    @apply w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg
+           focus:outline-none focus:ring-2 focus:ring-indigo-500;
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 bg-indigo-600 hover:bg-indigo-500 rounded-lg font-semibold;
+  }
+
+  .btn-secondary {
+    @apply px-3 py-1 bg-slate-700 hover:bg-slate-600 rounded-md text-sm;
+  }
+}
 *{
     box-sizing: border-box;
 }
-
+input, select, textarea {
+  background-color: var(--color-card);
+  color: var(--color-card-foreground);
+  border: 1px solid var(--color-border);
+}
+button{
+  cursor: pointer;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
+body{
+  @apply bg-background text-background-foreground
+}
 @media print {
 
       @page {

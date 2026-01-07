@@ -38,6 +38,7 @@
 		"vite": "^7.2.6"
 	},
 	"dependencies": {
+		"fuse.js": "^7.1.0",
 		"lucide-svelte": "^0.562.0",
 		"zod": "^4.2.1"
 	}
