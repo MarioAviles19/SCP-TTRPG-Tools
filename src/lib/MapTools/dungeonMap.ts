@@ -29,7 +29,7 @@ export class DungeonMap{
     //Bounding box solution for selecting objects?
 
     gridDensity = 75
-    lineWidth = 20
+    lineWidth = 10
 
     constructor(canvas : HTMLCanvasElement){
         this.cMainCanvas = canvas;
@@ -53,11 +53,15 @@ export class DungeonMap{
         
     }
     private handlePointerDown(ev : PointerEvent){
+
+        if(ev.shiftKey){
+            this.beginCameraDrag(this.mouse)
+            return
+        }
         const gridPos = this.getClosestGridCoordinate(this.mouse) 
         if(!this.activeLine){
             this.activeLine = {from: gridPos, to : gridPos}
         }
-        console.log(this.activeLine)
     }
     private handlePointerUp(ev : PointerEvent){
         if(this.activeLine){
@@ -70,10 +74,22 @@ export class DungeonMap{
     private handlePointerMove(ev : PointerEvent){
         this.mouse = this.getMousePos(this.cMainCanvas, ev)
 
+        if(ev.shiftKey){
+            this.camera.x += ev.x * .1
+            this.camera.y += ev.y * .1
+        }
+
         if(this.activeLine){
             const closestDot = this.getClosestGridCoordinate(this.mouse)
-            this.activeLine.to = closestDot
+
+            this.activeLine.to = this.constrainToAxis(this.activeLine.from, closestDot)
         }
+    }
+    private constrainToAxis(from : coordinate, to : coordinate){
+
+        const dx = Math.abs(from.x - to.x)
+        const dy = Math.abs(from.y - to.y)
+        return dx >= dy? {x : to.x, y: from.y} : {x : from.x, y : to.y}
     }
     private addObject(data : {from : coordinate, to : coordinate}){
         this.lines.push(data)
@@ -109,6 +125,9 @@ export class DungeonMap{
         if(typeof window === 'undefined'){
             return
         }
+    }
+    private beginCameraDrag(position : coordinate){
+
     }
     private drawGridVisibleArea(ctx: CanvasRenderingContext2D) {
         const spacing = this.gridDensity;
@@ -196,7 +215,6 @@ export class DungeonMap{
         this.mainCtx.drawImage(this.cSpriteLayer, 0, 0)
 
 
-        this.drawLine(this.mainCtx, {x: 0, y: 0}, {x:500, y: 500})
 
 
         if(this.shouldAnimate){
