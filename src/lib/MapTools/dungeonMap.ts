@@ -17,7 +17,7 @@ export class DungeonMap{
     private camera = {
                 x: -200,
                 y: -200,
-                zoom: .2
+                zoom: 1
     }
 
     private shouldAnimate = true
@@ -97,7 +97,6 @@ export class DungeonMap{
     private setupCanvas(canvas : HTMLCanvasElement){
         const rect = canvas.getBoundingClientRect();
         const dpr = window.devicePixelRatio || 1;
-        const scale = 2;
         canvas.width = rect.width * dpr;
         canvas.height = rect.height * dpr;
 
@@ -115,9 +114,13 @@ export class DungeonMap{
     private getMousePos(canvas: HTMLCanvasElement, ev: MouseEvent) {
         
         const rect = canvas.getBoundingClientRect();
+        const screenX = ev.clientX - rect.left;
+        const screenY = ev.clientY - rect.top;
+
+        // world space
         return {
-            x: ((ev.clientX - rect.left) + this.camera.x) * window.devicePixelRatio || 1,
-            y: ((ev.clientY - rect.top)+ this.camera.y) * window.devicePixelRatio || 1
+            x: screenX / this.camera.zoom + this.camera.x,
+            y: screenY / this.camera.zoom + this.camera.y
         };
     }
     private syncLocalStorage(){
@@ -148,13 +151,10 @@ export class DungeonMap{
             for (let y = startY; y < bottom; y += spacing) {
                 this.drawCircle(ctx, x, y, r)
                 if(first){
-                    console.log({x,y})
                 }
                 first = false
             }
         }
-       // this.drawCircle(ctx, -200, -200, 50)
-        console.log({left, top, right, bottom, mouse : this.mouse})
     }
     private drawLayout(ctx: CanvasRenderingContext2D){
         this.lines.forEach((val)=>{
@@ -215,7 +215,7 @@ export class DungeonMap{
         this.clearCanvas(this.gridCtx)
         this.clearCanvas(this.layoutCtx)
         this.clearCanvas(this.spriteCtx)
-        //this.applyCameraTransform(this.mainCtx)
+
         this.applyCameraTransform(this.gridCtx)
         this.applyCameraTransform(this.layoutCtx)
         this.applyCameraTransform(this.spriteCtx)
@@ -223,7 +223,7 @@ export class DungeonMap{
         this.drawGridVisibleArea(this.gridCtx);
         this.drawLayout(this.layoutCtx)
         this.drawSprites(this.spriteCtx)
-        this.drawCircle(this.gridCtx, -200, -200, 50)
+
 
 
         this.mainCtx.drawImage(this.cGridLayer, 0, 0)
