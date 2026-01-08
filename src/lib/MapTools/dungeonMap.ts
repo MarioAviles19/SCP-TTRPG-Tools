@@ -15,9 +15,9 @@ export class DungeonMap{
     private mouse = {x: 0, y : 0}
 
     private camera = {
-                x: -20,
-                y: -20,
-                zoom: 1
+                x: -200,
+                y: -200,
+                zoom: .2
     }
 
     private shouldAnimate = true
@@ -75,8 +75,8 @@ export class DungeonMap{
         this.mouse = this.getMousePos(this.cMainCanvas, ev)
 
         if(ev.shiftKey){
-            this.camera.x += ev.x * .1
-            this.camera.y += ev.y * .1
+            this.camera.x -= ev.movementX 
+            this.camera.y -= ev.movementY 
         }
 
         if(this.activeLine){
@@ -93,7 +93,6 @@ export class DungeonMap{
     }
     private addObject(data : {from : coordinate, to : coordinate}){
         this.lines.push(data)
-        console.log(this.lines)
     }
     private setupCanvas(canvas : HTMLCanvasElement){
         const rect = canvas.getBoundingClientRect();
@@ -107,8 +106,8 @@ export class DungeonMap{
 
         Array.from([this.cGridLayer, this.cLayoutLayer, this.cSpriteLayer]).forEach((canvas)=>{
 
-            canvas.width = this.cMainCanvas.width * dpr
-            canvas.height = this.cMainCanvas.height * dpr
+            canvas.width = this.cMainCanvas.width
+            canvas.height = this.cMainCanvas.height
         })
 
 
@@ -133,20 +132,29 @@ export class DungeonMap{
         const spacing = this.gridDensity;
         const r = 5;
 
-        // Convert screen → world bounds
+        const width  = this.cMainCanvas.width  / this.camera.zoom;
+        const height = this.cMainCanvas.height / this.camera.zoom;
+
         const left   = this.camera.x;
         const top    = this.camera.y;
-        const right  = left + this.cMainCanvas.width / this.camera.zoom;
-        const bottom = top  + this.cMainCanvas.height / this.camera.zoom;
+        const right  = left + width;
+        const bottom = top  + height;
 
-        const startX = Math.floor(left / spacing) * spacing;
-        const startY = Math.floor(top / spacing) * spacing;
+        const startX = left - ((left % spacing + spacing) % spacing);
+        const startY = top  - ((top  % spacing + spacing) % spacing);
         ctx.fillStyle = "white";
+        let first = true
         for (let x = startX; x < right; x += spacing) {
             for (let y = startY; y < bottom; y += spacing) {
                 this.drawCircle(ctx, x, y, r)
+                if(first){
+                    console.log({x,y})
+                }
+                first = false
             }
         }
+       // this.drawCircle(ctx, -200, -200, 50)
+        console.log({left, top, right, bottom, mouse : this.mouse})
     }
     private drawLayout(ctx: CanvasRenderingContext2D){
         this.lines.forEach((val)=>{
@@ -188,20 +196,26 @@ export class DungeonMap{
         ctx.fill();
     }
     private applyCameraTransform(ctx : CanvasRenderingContext2D){
-        ctx.setTransform(1, 0, 0, 1, 0, 0); // RESET
-        ctx.clearRect(0, 0, this.cMainCanvas.width, this.cMainCanvas.height);
+
 
         // Apply camera
-        ctx.translate(-this.camera.x, -this.camera.y);
         ctx.scale(this.camera.zoom, this.camera.zoom);
+        ctx.translate(-this.camera.x, -this.camera.y);
 
+    }
+    private clearCanvas(ctx : CanvasRenderingContext2D){
+        ctx.setTransform(1, 0, 0, 1, 0, 0); // RESET
+        ctx.clearRect(0, 0, this.cMainCanvas.width, this.cMainCanvas.height);
     }
     animate(){
 
         //this.drawGrid()
 
-
-        this.applyCameraTransform(this.mainCtx)
+        this.clearCanvas(this.mainCtx)
+        this.clearCanvas(this.gridCtx)
+        this.clearCanvas(this.layoutCtx)
+        this.clearCanvas(this.spriteCtx)
+        //this.applyCameraTransform(this.mainCtx)
         this.applyCameraTransform(this.gridCtx)
         this.applyCameraTransform(this.layoutCtx)
         this.applyCameraTransform(this.spriteCtx)
@@ -209,16 +223,16 @@ export class DungeonMap{
         this.drawGridVisibleArea(this.gridCtx);
         this.drawLayout(this.layoutCtx)
         this.drawSprites(this.spriteCtx)
+        this.drawCircle(this.gridCtx, -200, -200, 50)
+
 
         this.mainCtx.drawImage(this.cGridLayer, 0, 0)
         this.mainCtx.drawImage(this.cLayoutLayer, 0, 0)
         this.mainCtx.drawImage(this.cSpriteLayer, 0, 0)
 
-
-
-
         if(this.shouldAnimate){
             window.requestAnimationFrame(()=>{this.animate()})
         }
+
     }
 }
