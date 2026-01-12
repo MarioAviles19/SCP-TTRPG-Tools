@@ -1,7 +1,5 @@
 import type { Coordinate } from "./types"
-
-export class DungeonMap{
-
+class Renderer{
     private cMainCanvas : HTMLCanvasElement
     private cGridLayer : HTMLCanvasElement
     private cLayoutLayer : HTMLCanvasElement
@@ -83,7 +81,7 @@ export class DungeonMap{
             const closestDot = this.getClosestGridCoordinate(this.mouse)
 
             this.activeLine.to = this.constrainToAxis(this.activeLine.from, closestDot)
-        }
+        } 
     }
     private constrainToAxis(from : Coordinate, to : Coordinate){
 
