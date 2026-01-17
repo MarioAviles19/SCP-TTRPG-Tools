@@ -23,7 +23,7 @@
     let editOpen = $state(false)
     let searchTerm = $state("")
 
-    characterLoader.query({sort : ["type", "challengeRating", "name"]})
+    characterLoader.select({sort : ["type", "challengeRating", "name"]})
 
     function deleteItem(index : number){
         characterLoader.remove(index)
@@ -34,7 +34,7 @@
         editOpen = true
     }
     function search(){
-        characterLoader.query({search : {term : searchTerm, keys : ["name", "type", "notes"]}, sort : ["type", "name", "challengeRating"]})
+        characterLoader.select({search : {term : searchTerm, keys : ["name", "type", "notes"]}, sort : ["type", "name", "challengeRating"]})
     }
     function getOptions<T>(param : keyof NPCSchema, list : NPCSchema[]){
     const foundOptions : any = {}
@@ -59,7 +59,7 @@
 {#if inputOpen}
     <div class="absolute z-40 top-0 left-0 w-full backdrop-blur-xs flex flex-col items-center justify-center">
         <button onclick={()=>{inputOpen = false}} class="block my-2"><X/></button>
-        <CharacterInput onSubmit={(data : NPCSchema)=>{
+        <CharacterInput npc={characterLoader.list[characterLoader.list.length - 1] ?? undefined} onSubmit={(data : NPCSchema)=>{
             const res = characterLoader.add(data); 
             if(!res?.error)
             inputOpen = false

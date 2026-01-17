@@ -18,26 +18,26 @@
     })
     // Form state is partial by design
     type props = {
-        npc?: Partial<NPCSchema> & any,
-            onSubmit: (npc: NPCSchema & {index?: number}) => void
+          npc?: Partial<NPCSchema> & any,
+          onSubmit: (npc: NPCSchema & {index?: number}) => void
         };
         
 
-    let { npc = $bindable({}), onSubmit } : props = $props()
-    if(!npc.abilities){
-        npc.abilities = {}
-    }
-    if(!npc.actions){
-        npc.actions = []
-    }
-    if(!npc.skills){
-        npc.skills = {}
-    }
-    if(!npc.savingThrows){
-        npc.savingThrows = {}
-    }
+    let { npc, onSubmit } : props = $props()
+
+    let formNpc = $state<Partial<NPCSchema> & any>({
+      abilities: {},
+      actions: [],
+      skills: {},
+      savingThrows: {},
+    })
+    onMount(()=>{
+      formNpc = {...formNpc, ...npc}
+      console.log(formNpc)
+    })
+
     function submit() {
-        onSubmit(npc as NPCSchema); // validate with Zod outside
+        onSubmit(formNpc as NPCSchema); // validate with Zod outside
     }
     let actionList = $state<actions>([])
     const ABILITIES = ["str", "dex", "con", "int", "wis", "cha"];
@@ -93,13 +93,13 @@
 
     function actionSelected(actionInputIndex : number, actionListIndex : number){
 
-        console.log({actions: npc.actions, actionInputIndex, actionListIndex})
+        console.log({actions: formNpc.actions, actionInputIndex, actionListIndex})
 
 
         if(actionListIndex < 0){
-            npc.actions[actionInputIndex] = {}
+            formNpc.actions[actionInputIndex] = {}
         } else if(actionList){
-            npc.actions[actionInputIndex] = actionList[actionListIndex]
+            formNpc.actions[actionInputIndex] = actionList[actionListIndex]
         }
     }
     const selectAction = (ev : Event, i : number)=>{
@@ -117,7 +117,7 @@
         <input
           class="input"
           placeholder="Name"
-          bind:value={npc.name}
+          bind:value={formNpc.name}
         />
     </label>
   </div>
@@ -129,7 +129,7 @@
         <input
           class="input"
           placeholder="Type (e.g. humanoid)"
-          bind:value={npc.type}
+          bind:value={formNpc.type}
         />
     </label>
   </div>
@@ -138,22 +138,22 @@
   <div class="grid grid-cols-4 gap-4">
     <label>
         <p class="font-semibold text-sm">AC</p>
-        <input class="input" type="number" placeholder="AC" bind:value={npc.armorClass} />
+        <input class="input" type="number" placeholder="AC" bind:value={formNpc.armorClass} />
     </label>
 
     <label>
         <p class="font-semibold text-sm">HP</p>
-        <input class="input" type="number" placeholder="HP" bind:value={npc.hitPoints} />
+        <input class="input" type="number" placeholder="HP" bind:value={formNpc.hitPoints} />
     </label>
 
     <label>
         <p class="font-semibold text-sm">Hit Dice</p>
-        <input class="input" placeholder="Hit Dice" bind:value={npc.hitDice} />
+        <input class="input" placeholder="Hit Dice" bind:value={formNpc.hitDice} />
     </label>
 
     <label>
         <p class="font-semibold text-sm">Challenge Rating</p>
-        <input class="input" type="number" placeholder="CR" bind:value={npc.challengeRating} />
+        <input class="input" type="number" placeholder="CR" bind:value={formNpc.challengeRating} />
     </label>
   </div>
 
@@ -168,12 +168,12 @@
               class="input text-center"
               type="number"
               placeholder={stat.toUpperCase()}
-              bind:value={npc.abilities[stat]}
+              bind:value={formNpc.abilities[stat]}
               oninput={(e) => {
-                if(!npc.abilities){
-                    npc.abilities = {}
+                if(!formNpc.abilities){
+                    formNpc.abilities = {}
                 }
-                npc.abilities[stat] = Number(e.currentTarget.value);
+                formNpc.abilities[stat] = Number(e.currentTarget.value);
               }}
             />
         </label>
@@ -191,7 +191,7 @@
               class="input text-center"
               type="number"
               placeholder={stat.toUpperCase()}
-              bind:value={npc.savingThrows[stat]}
+              bind:value={formNpc.savingThrows[stat]}
             />
         </label>
       {/each}
@@ -209,7 +209,7 @@
             class="input w-full"
             type="number"
             placeholder="+0"
-            bind:value={npc.skills[skill.split(" ")[0]]}
+            bind:value={formNpc.skills[skill.split(" ")[0]]}
           />
           </label>
         </div>
@@ -221,10 +221,10 @@
   <div>
     <h2 class="font-semibold mb-2">Actions</h2>
 
-    {#each npc.actions ?? [] as action, i}
+    {#each formNpc.actions ?? [] as action, i}
     <div class="group">
         <div class="">
-            <button class="group-hover:opacity-100 opacity-0 hover:text-destructive transition-all" onclick={()=>{npc.actions.splice(i, 1); npc.actions = npc.actions}}><X/></button>
+            <button class="group-hover:opacity-100 opacity-0 hover:text-destructive transition-all" onclick={()=>{formNpc.actions.splice(i, 1); formNpc.actions = formNpc.actions}}><X/></button>
             <select class="input w-full" onchange={(ev)=>{selectAction(ev, i)}}>
                 <option value="-1"></option>
                 {#each actionList as action, n}
@@ -244,16 +244,16 @@
     <button
       class="btn-secondary"
       onclick={() => {
-        npc.actions ??= [];
-        npc.actions.push({ name: "", description: "" });
-        npc.actions = npc.actions
+        formNpc.actions ??= [];
+        formNpc.actions.push({ name: "", description: "" });
+        formNpc.actions = formNpc.actions
       }}
     >
       + Add Action
     </button>
   </div>
 
-    <textarea class="textarea resize-none w-full h-[4lh]" bind:value={npc.notes} placeholder="Notes (e.g., background, motivation, etc.)"></textarea>
+    <textarea class="textarea resize-none w-full h-[4lh]" bind:value={formNpc.notes} placeholder="Notes (e.g., background, motivation, etc.)"></textarea>
 
   <!-- Submit -->
   <div class="text-right">

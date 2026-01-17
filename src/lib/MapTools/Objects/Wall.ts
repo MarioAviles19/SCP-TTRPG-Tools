@@ -16,8 +16,6 @@ export class Wall extends MapObject{
         this.node2 = new WallNode(this, endPos)
         this.thickness = thickness
 
-        //calculate vertices based on start, end, and thickness
-
         this.verts = this.GenerateVertices()
         this.boundingBox = new BoundingBox(this.verts)
 

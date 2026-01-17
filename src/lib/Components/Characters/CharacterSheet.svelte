@@ -1,15 +1,16 @@
 <script lang="ts">
-  import { NPCSchema as NPC } from "$lib/types";
+  import { NPCSchema as NPC, type AbilityScoresSchema } from "$lib/types";
   import { Pencil, Trash2 } from "lucide-svelte"
 
+
   type props = {
-    npc : NPC | any,
-    onedit : (data : NPC & {index : number})=>void,
-    ondelete : (index : number)=>void
+    npc : NPC & {index : number},
+    onedit? : (data : NPC & {index : number})=>void,
+    ondelete? : (index : number)=>void
   }
   let { npc, onedit, ondelete } : props = $props();
 
-  const ABILITIES = ["str", "dex", "con", "int", "wis", "cha"];
+  const ABILITIES = $derived(Object.keys(npc.abilities)) as (keyof AbilityScoresSchema)[]
   const SKILLS = [
     "athletics","acrobatics","sleightOfHand","stealth","science","history","investigation",
     "nature","religion","animalHandling","insight","medicine","perception","survival",
@@ -19,7 +20,6 @@
   function formatSkill(skill: string) {
     return skill.replace(/([A-Z])/g, " $1").replace(/^./, s => s.toUpperCase());
   }
-  $inspect(npc.skills)
 
 </script>
 
@@ -32,8 +32,12 @@
         <p class="text-sm">{npc.type}</p>
     </div>
     <div>
+      {#if onedit}
         <button onclick={()=>{onedit(npc)}} class="btn-secondary"><Pencil/></button>
+      {/if}
+      {#if ondelete}
         <button onclick={()=>{ondelete(npc.index)}} class="btn-secondary text-destructive"><Trash2/></button>
+        {/if}
     </div>
   </div>
 

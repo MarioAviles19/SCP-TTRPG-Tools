@@ -2,7 +2,11 @@ import z from "zod";
 import Fuse from "fuse.js";
 
 type Listener = () => void;
-
+type QueryOptions<T> = {
+    filter? : Partial<z.infer<T>>, 
+    sort? : (keyof z.infer<T>)[], 
+    search? : {term : string, keys : (keyof z.infer<T>)[]}
+}
 export class JSONLoader<T extends z.ZodObject> {
 
     #initialized = false
@@ -18,7 +22,6 @@ export class JSONLoader<T extends z.ZodObject> {
         this.syncLocalStorage()
         this.query({})
         this.query(this.currentQuerry)
-        console.log({list: this.list, loaded: this.loadedFile})
     }
     #list : (z.infer<T> & {index : number})[] = []
 
@@ -33,7 +36,7 @@ export class JSONLoader<T extends z.ZodObject> {
     listeners = new Set<Listener>()
 
     schema : T
-    currentQuerry : {filter? : Partial<z.infer<T>>, sort? : (keyof z.infer<T>)[], search? : {term : string, keys : string[]}} = {}
+    currentQuerry : QueryOptions<T> = {}
 
     constructor(schema : T){
         this.schema = schema
@@ -175,30 +178,38 @@ export class JSONLoader<T extends z.ZodObject> {
         })
         return filtered
     }
-    private fuzzySearch(term : string, keys : string[]){
+    private fuzzySearch(listToSearch : z.infer<T>[], term : string, keys : (keyof z.infer<T>)[]){
         if(!term || keys.length <= 0){
-            return this.loadedFile.map((val, i)=>{ return {...val, index : i}})
+            return listToSearch.map((val, i)=>{ return {...val, index : i}})
         }
-        const fuse = new Fuse(this.loadedFile, {keys, threshold: 0.2})
+        const keysAfterTyped = keys as string[]
+        const fuse = new Fuse(listToSearch, {keys : keysAfterTyped, threshold: 0.2})
         const result = fuse.search(term)
         return result.map((val)=>{return {...val.item, index : val.refIndex}})
     }
-    query(options : {filter? : Partial<z.infer<T>>, sort? : (keyof z.infer<T>)[], search? : {term : string, keys : string[]}}){
+    query(options : QueryOptions<T>){
+        let searchResult = Array.from(this.loadedFile) as (z.infer<T> & {index : number})[]
         if(!options || Object.keys(options).length === 0){
-            this.list = this.loadedFile.map((val, i)=>{return {...val, index : i}})
+            searchResult = this.loadedFile.map((val, i)=>{return {...val, index : i}})
         }
         if(options.search){
-            this.list = this.fuzzySearch(options.search.term, options.search.keys)
+            searchResult = this.fuzzySearch(searchResult, options.search.term, options.search.keys)
         }
         if(options.filter){
-            this.list = this.filterBy(this.list, options.filter)
+            searchResult = this.filterBy(searchResult, options.filter)
         }
         if(options.sort){
-            this.list = this.sortBy(this.list, options.sort)
+            searchResult = this.sortBy(searchResult, options.sort)
         }
+        return {searchResult, options}
+    }
+    select(opts : QueryOptions<T>){
+        const { searchResult, options} = this.query(opts)
+
+        this.list = Array.from(searchResult)
         this.currentQuerry = options
     }
-
+    
     subscribe(fn: Listener) {
     this.listeners.add(fn);
     return () => this.listeners.delete(fn);

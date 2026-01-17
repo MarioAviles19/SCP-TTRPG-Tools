@@ -57,7 +57,7 @@
         if(typeFilter){
             type = {type : typeFilter}
         }
-        abilitiesLoader.query(
+        abilitiesLoader.select(
             {
                 filter: {...classType, ...type}, 
                 sort: ["classType", "type", "level"],

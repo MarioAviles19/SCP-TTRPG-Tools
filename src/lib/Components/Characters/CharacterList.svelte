@@ -11,7 +11,7 @@
 </script>
 
 {#each list as npc, i}
-    <button aria-current={activeIndex === i ? "true" : undefined} onclick={()=>{onselect(i)}} class="block w-full my-1 aria-[current]:ring-1 aria-[current]:ring-primary aria-[current]:translate-x-2 rounded-md hover:translate-x-2 transition-all">
+    <button aria-current={activeIndex === i ? "true" : undefined} onclick={()=>{onselect?.(i)}} class="block w-full my-1 aria-[current]:ring-1 aria-[current]:ring-primary aria-[current]:translate-x-2 rounded-md hover:translate-x-2 transition-all">
         <CharacterCard npc={npc}/>
     </button>
 {/each}

@@ -5,7 +5,7 @@
 	import { JSONLoader } from "$lib/JSONLoader";
 
 
-    //Abilities data
+
     const abilitiesLoader = new JSONLoader(AbilityData)
     let abilitiesList : AbilityData[] = $state([])
     abilitiesLoader.subscribe(()=>{
@@ -28,7 +28,6 @@
 
     characterLoader.subscribe(()=>{
         characterList = characterLoader.list
-        console.log(characterList)
     })
     characterList = characterLoader.list
     function getCharacterList(){

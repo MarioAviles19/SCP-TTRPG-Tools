@@ -8,15 +8,18 @@
   --color-background-foreground: rgb(226, 232, 240); /* slate-200 */
 
   /* Cards / panels (lighter) */
-  --color-card: rgb(30, 41, 59);                     /* slate-800 */
+  --color-card: #1e293b;                     /* slate-800 */
   --color-card-foreground: rgb(241, 245, 249);      /* slate-100 */
+
+  --color-input: #1a2537;
+  --color-input-foreground: rgb(196, 196, 196);
 
   /* Inputs / subtle surfaces */
   --color-muted: rgb(51, 65, 85);                    /* slate-700 */
   --color-muted-foreground: rgb(203, 213, 225);     /* slate-300 */
 
   /* Borders */
-  --color-border: rgb(71, 85, 105);                  /* slate-600 */
+  --color-border: #314158;                  /* slate-600 */
 
   /* Primary actions */
   --color-primary: rgb(79, 70, 229);                 /* indigo-600 */
@@ -53,8 +56,11 @@
   --color-background: var(--color-background);
   --color-background-foreground: var(--color-background-foreground);
 
-  --color-card: @apply bg-slate-900 ;
-  --color-card-foreground: @apply text-slate-100;
+  --color-card:  rgb(30, 41, 59) ;
+  --color-card-foreground: white;
+
+  --color-input: var(--color-input);
+  --color-input-foreground: var(var(--color-input-foreground));
 
   --color-border: var(--color-border);
 
@@ -79,7 +85,7 @@
     @apply bg-primary/5
   }
     .input, .textarea {
-    @apply w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg
+    @apply w-full px-3 py-2 bg-input border border-slate-700 rounded-lg
            focus:outline-none focus:ring-2 focus:ring-indigo-500;
   }
 
@@ -93,11 +99,6 @@
 }
 *{
     box-sizing: border-box;
-}
-input, select, textarea {
-  background-color: var(--color-card);
-  color: var(--color-card-foreground);
-  border: 1px solid var(--color-border);
 }
 button{
   cursor: pointer;
