@@ -13,7 +13,7 @@
 
 </script>
 
-<div class="w-full h-full flex items-center justify-center">
+<div class="w-full h-full flex items-center justify-center border border-neutral-100">
     <canvas class="w-full h-[95svh]" bind:this={canvas}></canvas>
 </div>
 

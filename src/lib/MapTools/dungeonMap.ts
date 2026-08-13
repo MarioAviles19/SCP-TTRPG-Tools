@@ -82,7 +82,7 @@ export class DungeonMap{
         if(this.activeLine){
             const closestDot = this.getClosestGridCoordinate(this.mouse)
 
-            this.activeLine.to = this.constrainToAxis(this.activeLine.from, closestDot)
+            this.activeLine.to = closestDot//this.constrainToAxis(this.activeLine.from, closestDot)
         }
     }
     private constrainToAxis(from : Coordinate, to : Coordinate){
