@@ -13,8 +13,8 @@ class Renderer{
     private mouse = {x: 0, y : 0}
 
     private camera = {
-                x: -200,
-                y: -200,
+                x: 0,
+                y: 0,
                 zoom: 1
     }
 

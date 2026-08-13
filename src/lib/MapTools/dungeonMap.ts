@@ -99,7 +99,7 @@ export class DungeonMap{
         const dpr = window.devicePixelRatio || 1;
         canvas.width = rect.width * dpr;
         canvas.height = rect.height * dpr;
-
+        console.log(dpr)
         const ctx = canvas.getContext("2d")!;
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
@@ -197,10 +197,17 @@ export class DungeonMap{
     }
     private applyCameraTransform(ctx : CanvasRenderingContext2D){
 
-
+        const dpr = window.devicePixelRatio || 1;
         // Apply camera
-        ctx.scale(this.camera.zoom, this.camera.zoom);
-        ctx.translate(-this.camera.x, -this.camera.y);
+
+        ctx.setTransform(
+            dpr * this.camera.zoom,
+            0,
+            0,
+            dpr * this.camera.zoom,
+            -this.camera.x * dpr * this.camera.zoom,
+            -this.camera.y * dpr * this.camera.zoom
+        );
 
     }
     private clearCanvas(ctx : CanvasRenderingContext2D){
