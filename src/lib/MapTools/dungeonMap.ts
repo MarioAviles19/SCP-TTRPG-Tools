@@ -1,4 +1,4 @@
-import type { Coordinate } from "./types"
+import type { Coordinate, EditorMode } from "./types"
 
 export class DungeonMap{
 
@@ -26,6 +26,8 @@ export class DungeonMap{
 
     private lines : {from : Coordinate, to : Coordinate}[] = []
 
+    private currentMode : EditorMode = "select"
+
     //Bounding box solution for selecting objects?
 
     gridDensity = 75
@@ -51,6 +53,9 @@ export class DungeonMap{
         this.cMainCanvas.addEventListener("pointerup", (ev)=>{this.handlePointerUp(ev)})
         this.cMainCanvas.addEventListener("pointermove", (ev)=>{this.handlePointerMove(ev)})
         
+    }
+    public setMode(mode : EditorMode){
+        this.currentMode = mode
     }
     private handlePointerDown(ev : PointerEvent){
 
