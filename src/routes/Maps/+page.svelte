@@ -11,6 +11,7 @@
         if(canvas){
             map = new DungeonMap(canvas)
             map.animate()
+            map.setMode("brush")
         }
     })
 
@@ -22,8 +23,8 @@
 
 <Hotbar.Root selected="paint">
     <Hotbar.Content class="flex">
-        <Hotbar.Item onclick={()=>{}} value="select"><Pointer/></Hotbar.Item>
-        <Hotbar.Item onclick={()=>{}} value="paint"><Paintbrush/></Hotbar.Item>
-        <Hotbar.Item onclick={()=>{}} value="erase"><Eraser/></Hotbar.Item>
+        <Hotbar.Item onclick={()=>{map.setMode("select")}} value="select"><Pointer/></Hotbar.Item>
+        <Hotbar.Item onclick={()=>{map.setMode("brush")}} value="paint"><Paintbrush/></Hotbar.Item>
+        <Hotbar.Item onclick={()=>{map.setMode("erase")}} value="erase"><Eraser/></Hotbar.Item>
     </Hotbar.Content>
 </Hotbar.Root>

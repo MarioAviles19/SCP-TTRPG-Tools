@@ -63,9 +63,13 @@ export class DungeonMap{
             this.beginCameraDrag(this.mouse)
             return
         }
-        const gridPos = this.getClosestGridCoordinate(this.mouse) 
-        if(!this.activeLine){
-            this.activeLine = {from: gridPos, to : gridPos}
+        //paint mode
+        
+        if(this.currentMode === "brush"){
+            const gridPos = this.getClosestGridCoordinate(this.mouse) 
+            if(!this.activeLine){
+                this.activeLine = {from: gridPos, to : gridPos}
+            }
         }
     }
     private handlePointerUp(ev : PointerEvent){

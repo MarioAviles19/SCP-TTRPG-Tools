@@ -25,7 +25,7 @@ export class BoundingBox{
         if(parent){
             this.parent = parent
         }
-        this.isAxisAligned = BoundingBox.determineAxisAlignment(verts)
+        this.isAxisAligned = BoundingBox.isAxisAligned(verts)
         if(!this.isAxisAligned){
             let AABB = BoundingBox.toAxisAligned(verts)
             AABB.setChild(this)
@@ -34,7 +34,7 @@ export class BoundingBox{
         }
     }
 
-    static determineAxisAlignment(verts : RectVerts){
+    static isAxisAligned(verts : RectVerts){
         //TODO: watch out for floating points
         if(floatEqual(verts.a.x, verts.c.x)){return false} 
         if(floatEqual(verts.b.x, verts.d.x)){return false}
